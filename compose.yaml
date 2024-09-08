@@ -1,0 +1,118 @@
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    hostname: rabbitmq
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    env_file:
+      - .env
+    networks:
+      - crimmit_network
+
+  # postgres database
+  postgres:
+    image: postgres:latest
+    container_name: postgres_container
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: auth
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+    networks:
+      - crimmit_network
+
+  #pgadmin to manage postgres via GUI - POST 8080
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin_container
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - '8080:80'
+    networks:
+      - crimmit_network
+
+  # mongoDB
+  mongoDB:
+    container_name: mongoDB
+    image: mongo:latest
+    environment:
+      - MONGO_DATABASE='crimmit_database'
+    ports:
+      - 27017:27017
+    networks:
+      - crimmit_network
+
+  # mongo-express
+  mongo-express:
+    container_name: mongo-express
+    image: mongo-express
+    environment:
+      - ME_CONFIG_MONGODB_SERVER=mongoDB
+      - ME_CONFIG_MONGODB_PORT=27017
+    depends_on:
+      - mongoDB
+    networks:
+      - crimmit_network
+    ports:
+      - 8081:8081
+
+  # auth:
+  #   build:
+  #     context: ./
+  #     dockerfile: ./apps/auth/Dockerfile
+  #     target: dev
+  #   env_file:
+  #     - .env
+  #   environment:
+  #     - STAGE=dev
+  #     - RABBITMQ_HOST=rabbitmq:5672
+  #     - DB_HOST=postgres
+  #   depends_on:
+  #     - rabbitmq
+  #     - postgres
+  #   volumes:
+  #     - .:/usr/src/app
+  #     - /usr/src/app/node_modules
+  #   command: yarn start:dev auth
+  #   networks:
+  #     - crimmit_network
+
+  # api:
+  #   build:
+  #     context: ./
+  #     dockerfile: ./apps/crimmit-microservice/Dockerfile
+  #     target: dev
+  #   ports:
+  #     - '3000:3000'
+  #   env_file:
+  #     - .env
+  #   environment:
+  #     - STAGE=dev
+  #     - RABBITMQ_HOST=rabbitmq:5672
+  #     - DB_HOST=postgres
+  #   depends_on:
+  #     - auth
+  #     - rabbitmq
+  #   volumes:
+  #     - .:/usr/src/app
+  #     - /usr/src/app/node_modules
+  #   networks:
+  #     - crimmit_network
+  #   command: yarn start:dev crimmit-microservice
+
+networks:
+  crimmit_network:
+    driver: bridge
+
+volumes:
+  rabbitmq_data:
+  postgres_data:
