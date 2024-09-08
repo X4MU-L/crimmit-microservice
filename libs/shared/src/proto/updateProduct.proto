@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package updateProduct;
+
+service UpdateProductService {
+    rpc UpdateProduct (UpdateProductDTO) returns (Products) {}
+}
+
+message Product {
+    string _id = 1;
+    string name = 2;
+    int32 price = 3;
+    string description = 4;
+}
+
+message Products {
+    repeated Product products = 1; 
+}
+
+message UpdateProductDTO {
+    Userdata user = 1;
+    UpdateAbleData data = 2; 
+}
+
+message Userdata {
+    string  _id = 1;
+    string  firstName= 2;
+    string  lastName = 3;
+    string username = 4;
+    string email= 5;
+}
+
+message UpdateAbleData {
+    oneof update_field {
+        string username = 1;
+        string firstName = 2;
+        string lastName = 3;
+        string email = 4;
+    }
+}
