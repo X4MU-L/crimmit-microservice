@@ -28,33 +28,36 @@ This repository contains a microservices architecture built with NestJS for an i
 
 ## Overview
 
-_Owner Service:_ Manages owner profiles and also handles the auth for the microservices, will this could have also been a microservice of it's own, for the purpose of this project will serve. Also emits RabbitMQ events when an owner's details are updated.
+**Owner Service**: Manages owner profiles and also handles the auth for the microservices, will this could have also been a microservice of it's own, for the purpose of this project will serve. Also emits RabbitMQ events when an owner's details are updated.
 
-_Products Service:_ Manages product details and listens for updates from the Owner Service
+**Products Service**: Manages product details and listens for updates from the Owner Service
 
-_Order Service:_ Manages orders, listens for product updates
+**Order Service**: Manages orders, listens for product updates
 
 ## Repository Structure
 
-_libs/shared/src/proto/:_ Contains the proto files for gRPC communication.
+`libs/shared/src/proto/`: Contains the proto files for gRPC communication.
 
-_owner-service/:_ Implementation of the Owner Service.
-_products-service/:_ Implementation of the Products Service.
-_order-service/:_ Implementation of the Order Service.
+`owner-service/`: Implementation of the Owner Service.
+
+`products-service/`: Implementation of the Products Service.
+
+`order-service/`: Implementation of the Order Service.
 
 ## Communication Flow
 
-_Api Service_: Listen's for HTTP request from outside and is the only exposed service, upon recieving a request emits a rabbitMQ messagepattern to the desired service of the HTTP requests for processing and returns a HTTP response to the client.
+**Api Service**: Listen's for HTTP request from outside and is the only exposed service, upon recieving a request emits a rabbitMQ messagepattern to the desired service of the HTTP requests for processing and returns a HTTP response to the client.
 
-_Owner Service_: Handle creation of user and managing of user profiles, Upon updating user details, it emits a RabbitMQ event.
+**Owner Service**: Handle creation of user and managing of user profiles, Upon updating user details, it emits a RabbitMQ event.
 
-_Products Service_: Handles creation of products and Listens for gRPC call to update the user details.
+**Products Service**: Handles creation of products and Listens for gRPC call to update the user details.
 
-_Order Service_: Handles the Orders and Listens for product updates and updates orders accordingly.
+**Order Service**: Handles the Orders and Listens for product updates and updates orders accordingly.
 
 ## Retry Logic
 
-> [!IMPORTANT] The system includes a retry mechanism for failed events, although it is not fully implemented due to time constraints. If an event fails, the request will keep retrying without a logging event emitted.
+> [!IMPORTANT]
+> The system includes a retry mechanism for failed events, although it is not fully implemented due to time constraints. If an event fails, the request will keep retrying without a logging event emitted.
 
 ## Getting Started
 
@@ -81,7 +84,8 @@ Run the following command to generate TypeScript files for the proto files:
 $ make generate
 ```
 
-> [!IMPORTANT] Open the generated TypeScript files `.ts` in [libs/shared/src/proto](libs/shared/src/proto/) and change all `Id`to `_id` with the type `string | ObjectId`. this is because typescript does not generate `_` (underscore) in variable name.
+> [!IMPORTANT]
+> Open the generated TypeScript files `.ts` in [libs/shared/src/proto](libs/shared/src/proto/) and change all `Id`to `_id` with the type `string | ObjectId`. this is because typescript does not generate `_` (underscore) in variable name.
 
 e.g
 
@@ -126,7 +130,8 @@ GRPC_HOST=
 
 Use Docker Compose to run the application:
 
-> [!IMPORTANT] having set the environment virables..
+> [!IMPORTANT]
+> having set the environment virables..
 
 ```bash
 $ docker-compose up -d
@@ -138,7 +143,8 @@ Or
 
 Each microsevrice can as well be started independendtlly...
 
-> [!IMPORTANT] having set the environment virables..
+> [!IMPORTANT]
+> having set the environment virables..
 
 ```bash
 $ yarn start:dev owner-service # start the owner service
@@ -417,6 +423,7 @@ curl -X PATCH http://localhost:3000/order/update/<order_id> \
 }'
 ```
 
-> [!NOTE] Replace <your_token>, <product_id>, <user_id>, and <order_id> with actual values. Ensure the server is running on localhost:3000 before making requests.
+> [!NOTE]
+> Replace <your_token>, <product_id>, <user_id>, and <order_id> with actual values. Ensure the server is running on localhost:3000 before making requests.
 
 This microservices architecture demonstrates proficiency in building applications with NestJS, implementing inter-service communication via RabbitMQ and gRPC, due to time constrainst i wasn't able to implement and utilize caching mechanisms.
