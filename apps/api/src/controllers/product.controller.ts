@@ -21,7 +21,6 @@ export class ProductController {
   constructor(@Inject('PRODUCT_SERVICE') private productService: ClientProxy) {}
   @Get()
   async getAllProduct() {
-    console.log('came here');
     return this.productService.send(
       {
         cmd: 'get-all-product',
@@ -31,7 +30,6 @@ export class ProductController {
   }
   @Get('user/:id')
   async getUserProduct(@JwtForUserID() uid: string) {
-    console.log('data-payload', uid);
     return this.productService.send(
       {
         cmd: 'get-product-for-user',

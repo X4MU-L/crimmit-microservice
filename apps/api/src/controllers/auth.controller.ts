@@ -6,15 +6,6 @@ import { UserSignupDto, UserSignInDto } from '@app/shared/dtos';
 export class AuthController {
   constructor(@Inject('OWNER_SERVICE') private ownerService: ClientProxy) {}
 
-  @Get()
-  async getUser() {
-    return this.ownerService.send(
-      {
-        cmd: 'get-user',
-      },
-      {},
-    );
-  }
   @Post('signup')
   async createUser(@Body() body: UserSignupDto) {
     try {
