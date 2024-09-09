@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AppService } from './app.service';
 import { ConfigService } from '@nestjs/config';
 import { DynamicMongoModule, SharedModule, UserRepository } from '@app/shared';
 import { ProductController } from './controllers/product.controller';
@@ -30,12 +29,6 @@ import { OrderEntity, ProductEntity, UserEntity } from '@app/shared/entities';
     SharedModule.registerRMQ('ORDER_SERVICE', process.env.RABBITMQ_ORDER_QUEUE),
   ],
   controllers: [ProductController, AuthController, UserController],
-  providers: [
-    AppService,
-    JwtTokenStrategy,
-    JwtUserStrategy,
-    UserRepository,
-    ConfigService,
-  ],
+  providers: [JwtTokenStrategy, JwtUserStrategy, UserRepository, ConfigService],
 })
 export class AppModule {}

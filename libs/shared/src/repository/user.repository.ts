@@ -54,8 +54,7 @@ export class UserRepository extends Repository<UserEntity> {
         };
       }
     } catch (error) {
-      console.log(error, 'this ------------------');
-      return { notfound: 'user' };
+      throw new UnauthorizedException('Username or Password is incorrect');
     }
 
     throw new UnauthorizedException('Username or Password is incorrect');
@@ -79,13 +78,15 @@ export class UserRepository extends Repository<UserEntity> {
       );
 
       const user = affected > 0 ? await this.getUserById(data.userId) : null;
-      console.log(user, 'fetched user');
       return {
         message: affected > 0 ? 'updated successfully' : 'no updates to apply',
         affected,
         ...(affected > 0 ? { user } : {}),
       };
     } catch (error) {
+      if (+error.code === 23505) {
+        throw new ConflictException('Username or Email already exists');
+      }
       throw error;
     }
   }

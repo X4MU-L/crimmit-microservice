@@ -11,6 +11,11 @@ services:
       - .env
     networks:
       - crimmit_network
+    healthcheck:
+      test: ['CMD', 'rabbitmqctl', 'status']
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   # mongoDB
   mongoDB:
@@ -91,8 +96,10 @@ services:
       - RABBITMQ_HOST=rabbitmq:5672
       - MONGO_HOST=mongoDB
     depends_on:
-      - rabbitmq
-      - mongoDB
+      rabbitmq:
+        condition: service_healthy
+      mongoDB:
+        condition: service_started
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules

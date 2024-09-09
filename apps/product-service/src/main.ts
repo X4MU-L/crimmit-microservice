@@ -4,6 +4,7 @@ import { SharedService } from '@app/shared';
 import { MicroserviceOptions } from '@nestjs/microservices';
 import { UPDATE_PRODUCT_PACKAGE_NAME } from '@app/shared/proto/updateProduct';
 import { TransformInterceptor } from '@app/shared/transform.interceptor';
+import { HttpExceptionFilter } from '@app/shared/exception-handlers';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -18,9 +19,20 @@ async function bootstrap() {
     `${GRPC_HOST}:${SERVICE_PORT}`,
   );
   app.useGlobalInterceptors(new TransformInterceptor());
+  app.useGlobalFilters(new HttpExceptionFilter());
   app.connectMicroservice<MicroserviceOptions>(RMQqueue);
   app.connectMicroservice<MicroserviceOptions>(GRPCproto);
   await app.startAllMicroservices();
-  await app.listen(+SERVICE_PORT);
+  const server = await app.listen(+SERVICE_PORT);
+
+  const shutdown = () => {
+    server.close(() => {
+      console.log('Closed server connections.');
+      process.exit(0);
+    });
+  };
+
+  process.on('SIGINT', shutdown);
+  process.on('SIGTERM', shutdown);
 }
 bootstrap();

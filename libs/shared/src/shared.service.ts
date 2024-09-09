@@ -17,6 +17,7 @@ export class SharedService {
     const PASSWORD = this.config.get('RABBITMQ_PASS');
     const HOST = this.config.get('RABBITMQ_HOST');
 
+    console.log(`amqp://${USER}:${PASSWORD}@${HOST}`, 'connect string');
     return {
       transport: Transport.RMQ,
       options: {

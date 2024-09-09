@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 
 import { DataSource, Repository } from 'typeorm';
 import { ObjectId } from 'mongodb';
@@ -42,15 +46,19 @@ export class ProductRepository extends Repository<ProductEntity> {
   }): Promise<Omit<ProductEntity, 'user'>> {
     const { data, user } = payload;
 
-    console.log(payload);
-    const productData = {
-      ...data,
-      user,
-      userId: user._id.toString(), // Use the user's ID
-    };
-
-    const product = await this.save(this.create(productData));
-    return _.omit(product, ['user']);
+    try {
+      const productData = {
+        ...data,
+        user,
+        userId: user._id.toString(), // Use the user's ID
+      };
+      const product = await this.save(this.create(productData));
+      return _.omit(product, ['user']);
+    } catch (error) {
+      if (+error.code === 23505) {
+        throw new ConflictException('Product name already exists');
+      }
+    }
   }
 
   // Update a product
@@ -65,24 +73,32 @@ export class ProductRepository extends Repository<ProductEntity> {
       where: { _id: objectid, userId: userId },
     });
     if (!product) {
-      throw new Error('Product not found or does not belong to the user'); // Handle not found scenario
+      throw new NotFoundException(
+        'Product not found or does not belong to the user',
+      ); // Handle not found scenario
     }
     const willUpdate = Object.keys(data).some(
       (key) => data[key] !== (product[key] ? product[key] : data[key]),
     );
-    if (willUpdate) {
-      await this.save(Object.assign(product, data));
+    try {
+      if (willUpdate) {
+        await this.save(Object.assign(product, data));
+        return {
+          message: 'product updeated successfully',
+          success: true,
+          affected: 1,
+          product,
+        };
+      }
       return {
-        message: 'product updeated successfully',
+        message: 'no data updated',
         success: true,
-        affected: 1,
-        product,
+        affected: 0,
       };
+    } catch (error) {
+      if (+error.code === 23505) {
+        throw new ConflictException('Product name already exists');
+      }
     }
-    return {
-      message: 'no data updated',
-      success: true,
-      affected: 0,
-    };
   }
 }
