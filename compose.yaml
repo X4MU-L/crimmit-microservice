@@ -6,37 +6,9 @@ services:
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     ports:
-      - '5672:5672'
       - '15672:15672'
     env_file:
       - .env
-    networks:
-      - crimmit_network
-
-  # postgres database
-  postgres:
-    image: postgres:latest
-    container_name: postgres_container
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: auth
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    ports:
-      - '5432:5432'
-    networks:
-      - crimmit_network
-
-  #pgadmin to manage postgres via GUI - POST 8080
-  pgadmin:
-    image: dpage/pgadmin4:latest
-    container_name: pgadmin_container
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: admin
-    ports:
-      - '8080:80'
     networks:
       - crimmit_network
 
@@ -44,8 +16,6 @@ services:
   mongoDB:
     container_name: mongoDB
     image: mongo:latest
-    environment:
-      - MONGO_DATABASE='crimmit_database'
     ports:
       - 27017:27017
     networks:
@@ -65,49 +35,96 @@ services:
     ports:
       - 8081:8081
 
-  # auth:
-  #   build:
-  #     context: ./
-  #     dockerfile: ./apps/auth/Dockerfile
-  #     target: dev
-  #   env_file:
-  #     - .env
-  #   environment:
-  #     - STAGE=dev
-  #     - RABBITMQ_HOST=rabbitmq:5672
-  #     - DB_HOST=postgres
-  #   depends_on:
-  #     - rabbitmq
-  #     - postgres
-  #   volumes:
-  #     - .:/usr/src/app
-  #     - /usr/src/app/node_modules
-  #   command: yarn start:dev auth
-  #   networks:
-  #     - crimmit_network
+  owner-service:
+    build:
+      context: ./
+      dockerfile: ./apps/owner-service/Dockerfile
+      target: dev
+    env_file:
+      - .env
+    environment:
+      - STAGE=dev
+      - RABBITMQ_HOST=rabbitmq:5672
+      - MONGO_HOST=mongoDB
+    depends_on:
+      - rabbitmq
+      - mongoDB
+      - product-service
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    command: yarn start:dev owner-service
+    networks:
+      - crimmit_network
 
-  # api:
-  #   build:
-  #     context: ./
-  #     dockerfile: ./apps/crimmit-microservice/Dockerfile
-  #     target: dev
-  #   ports:
-  #     - '3000:3000'
-  #   env_file:
-  #     - .env
-  #   environment:
-  #     - STAGE=dev
-  #     - RABBITMQ_HOST=rabbitmq:5672
-  #     - DB_HOST=postgres
-  #   depends_on:
-  #     - auth
-  #     - rabbitmq
-  #   volumes:
-  #     - .:/usr/src/app
-  #     - /usr/src/app/node_modules
-  #   networks:
-  #     - crimmit_network
-  #   command: yarn start:dev crimmit-microservice
+  product-service:
+    build:
+      context: ./
+      dockerfile: ./apps/product-service/Dockerfile
+      target: dev
+    env_file:
+      - .env
+    environment:
+      - STAGE=dev
+      - RABBITMQ_HOST=rabbitmq:5672
+      - MONGO_HOST=mongoDB
+    depends_on:
+      - rabbitmq
+      - mongoDB
+      - order-service
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    command: yarn start:dev product-service
+    networks:
+      - crimmit_network
+
+  order-service:
+    build:
+      context: ./
+      dockerfile: ./apps/order-service/Dockerfile
+      target: dev
+    env_file:
+      - .env
+    environment:
+      - STAGE=dev
+      - RABBITMQ_HOST=rabbitmq:5672
+      - MONGO_HOST=mongoDB
+    depends_on:
+      - rabbitmq
+      - mongoDB
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    command: yarn start:dev order-service
+    networks:
+      - crimmit_network
+
+  api:
+    build:
+      context: ./
+      dockerfile: ./apps/api/Dockerfile
+      target: dev
+    ports:
+      - '3000:3000'
+    env_file:
+      - .env
+    environment:
+      - STAGE=dev
+      - RABBITMQ_HOST=rabbitmq:5672
+      - MONGO_HOST=mongoDB
+    depends_on:
+      - rabbitmq
+      - mongoDB
+      - product-service
+      - owner-service
+      - order-service
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    networks:
+      - crimmit_network
+    command: yarn start:dev api
 
 networks:
   crimmit_network:
@@ -115,4 +132,3 @@ networks:
 
 volumes:
   rabbitmq_data:
-  postgres_data:

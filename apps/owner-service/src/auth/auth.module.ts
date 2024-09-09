@@ -1,14 +1,9 @@
 import { Module } from '@nestjs/common';
-
-import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { UserRepository } from '@app/shared/repository';
-import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { DynamicMongoModule, SharedModule, SharedService } from '@app/shared';
-import { ProductEntity, UserEntity } from '@app/shared/entities';
-import { configValidationSchema } from '@app/shared/config.schema';
-import { JwtTokenStrategy } from '@app/shared/guard-strategies';
+import { DynamicMongoModule, SharedService } from '@app/shared';
+import { OrderEntity, ProductEntity, UserEntity } from '@app/shared/entities';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 @Module({
@@ -21,7 +16,7 @@ import { AuthService } from './auth.service';
     }),
     DynamicMongoModule.register(
       { name: 'owner-service', database: 'owner-database' },
-      [UserEntity, ProductEntity],
+      [UserEntity, ProductEntity, OrderEntity],
     ),
     TypeOrmModule.forFeature([UserEntity]),
   ],

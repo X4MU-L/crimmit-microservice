@@ -1,9 +1,7 @@
-import { HTTPAppAuthGuard, TOKENGuard } from '@app/shared/guards';
 import {
   Controller,
   Get,
   Inject,
-  Post,
   Body,
   UseGuards,
   Patch,

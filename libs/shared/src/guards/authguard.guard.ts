@@ -15,7 +15,7 @@ export class HTTPAppAuthGuard implements CanActivate {
   ): boolean | Promise<boolean> | Observable<boolean> {
     const ctx = context.switchToHttp();
     const bearerToken = ctx.getRequest<Request>().headers['authorization'];
-    console.log('here -> no token');
+
     if (!bearerToken) return false;
     const tokenSplit = bearerToken.split(' ');
     if (tokenSplit.length !== 2) return false;

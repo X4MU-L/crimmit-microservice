@@ -1,30 +1,29 @@
 import { Injectable } from '@nestjs/common';
-import { CreateProductDto } from '@app/shared/dtos';
-import { UpdateProductRequestDto } from '@app/shared/dtos/update-product.dto';
+import { CreateOrderDto, UpdateOrderDto } from '@app/shared/dtos';
 import { ProductEntity, UserEntity } from '@app/shared/entities';
-import { OrderRepository, ProductRepository } from '@app/shared';
+import { OrderRepository } from '@app/shared';
 
 @Injectable()
 export class OrderService {
-  constructor(private productRepo: OrderRepository) {}
+  constructor(private orderRepo: OrderRepository) {}
 
   async getAllOrders(userId: string): Promise<ProductEntity[]> {
-    return this.productRepo.getAll(userId);
+    return this.orderRepo.getAllOrders(userId);
   }
 
-  async getAnOrder(userId: string): Promise<ProductEntity[]> {
-    return this.productRepo.getAUserOrder(userId);
+  async getAnOrder(orderId: string, userId: string): Promise<ProductEntity[]> {
+    return this.orderRepo.getAnOrder({ userId, orderId });
   }
 
-  async createOrder(payload: { data: CreateProductDto; user: UserEntity }) {
-    return this.productRepo.createOrder(payload); // Save and return the new product
+  async createOrder(payload: { data: CreateOrderDto; user: UserEntity }) {
+    return this.orderRepo.createOrder(payload); // Save and return the new product
   }
 
   async updateOrder(payload: {
-    data: UpdateProductRequestDto;
+    data: UpdateOrderDto;
     userId: string;
-    productId: string;
+    orderId: string;
   }) {
-    return this.productRepo.updateOrder(payload);
+    return this.orderRepo.updateOrder(payload);
   }
 }

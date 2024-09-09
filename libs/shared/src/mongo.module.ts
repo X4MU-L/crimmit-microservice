@@ -1,10 +1,7 @@
-// shared/src/mongo.module.ts
 import { Module, DynamicModule } from '@nestjs/common';
-import { MongooseModule, MongooseModuleOptions } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { configValidationSchema } from './config.schema';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserEntity } from './entities';
 
 @Module({
   imports: [

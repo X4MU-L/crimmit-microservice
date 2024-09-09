@@ -1,4 +1,4 @@
-import { Controller, Get, Inject, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Get, Inject, Post, Body } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { UserSignupDto, UserSignInDto } from '@app/shared/dtos';
 

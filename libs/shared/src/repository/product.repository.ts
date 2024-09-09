@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+
 import { DataSource, Repository } from 'typeorm';
 import { ObjectId } from 'mongodb';
-import { ProductEntity, UserEntity } from '../entities'; // Adjust the import path accordingly
-import { CreateProductDto } from '@app/shared/dtos'; // Adjust the import path accordingly
-import { UpdateProductRequestDto } from '@app/shared/dtos/update-product.dto'; // Adjust the import path accordingly
+import { ProductEntity, UserEntity } from '../entities';
+import { CreateProductDto } from '@app/shared/dtos';
+import { UpdateProductRequestDto } from '@app/shared/dtos/update-product.dto';
 import * as _ from 'lodash';
 
 @Injectable()
@@ -15,12 +15,12 @@ export class ProductRepository extends Repository<ProductEntity> {
 
   // Get all products
   async getAllProducts(): Promise<ProductEntity[]> {
-    return this.find(); // Fetch and return all products
+    return this.find();
   }
 
   // Get all products for a specific user
   async getAllUserProducts(userId: string): Promise<ProductEntity[]> {
-    return this.find({ where: { userId: userId } }); // Fetch products for the given user
+    return this.find({ where: { userId: userId } });
   }
 
   // Get a specific product for a user

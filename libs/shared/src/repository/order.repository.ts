@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { ObjectId } from 'mongodb';
-import { ProductEntity, UserEntity } from '../entities'; // Adjust the import path accordingly
-import { CreateProductDto } from '@app/shared/dtos'; // Adjust the import path accordingly
-import { UpdateProductRequestDto } from '@app/shared/dtos/update-product.dto'; // Adjust the import path accordingly
+import { ProductEntity, UserEntity } from '../entities';
+import { CreateOrderDto, UpdateOrderDto } from '@app/shared/dtos';
+
 import * as _ from 'lodash';
 
 @Injectable()
@@ -13,31 +12,20 @@ export class OrderRepository extends Repository<ProductEntity> {
     super(ProductEntity, dataSource.createEntityManager());
   }
 
-  // Get all products
-  async getAllProducts(): Promise<ProductEntity[]> {
-    return this.find(); // Fetch and return all products
+  async getAllOrders(userId: string): Promise<ProductEntity[]> {
+    return this.find({ where: { userId } });
   }
 
-  // Get all products for a specific user
-  async getAllUserProducts(userId: string): Promise<ProductEntity[]> {
-    return this.find({ where: { userId: userId } }); // Fetch products for the given user
-  }
-
-  // Get a specific product for a user
-  async getAProduct(payload: {
+  async getAnOrder(data: {
     userId: string;
-    productId: string;
-  }): Promise<ProductEntity> {
-    const { userId, productId } = payload;
-    const objectid = new ObjectId(productId);
-    return this.findOne({
-      where: { _id: objectid, userId: userId },
-    });
+    orderId: string;
+  }): Promise<ProductEntity[]> {
+    const _id = new ObjectId(data.orderId);
+    return this.find({ where: { userId: data.userId, _id } });
   }
 
-  // Create a new product
-  async createProduct(payload: {
-    data: CreateProductDto;
+  async createOrder(payload: {
+    data: CreateOrderDto;
     user: UserEntity;
   }): Promise<Omit<ProductEntity, 'user'>> {
     const { data, user } = payload;
@@ -53,14 +41,13 @@ export class OrderRepository extends Repository<ProductEntity> {
     return _.omit(product, ['user']);
   }
 
-  // Update a product
-  async updateProduct(payload: {
+  async updateOrder(payload: {
     userId: string;
-    data: UpdateProductRequestDto;
-    productId: string;
+    data: UpdateOrderDto;
+    orderId: string;
   }) {
-    const { data, userId, productId } = payload;
-    const objectid = new ObjectId(productId);
+    const { data, userId, orderId } = payload;
+    const objectid = new ObjectId(orderId);
     const product = await this.findOne({
       where: { _id: objectid, userId: userId },
     });

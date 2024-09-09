@@ -12,7 +12,7 @@ RUN yarn install --frozen-lockfile
 # Stage 2: Development
 FROM base AS dev
 COPY . .
-CMD ["yarn", "start:dev"]
+CMD ["yarn", "start:dev", "api"]
 
 
 

@@ -2,13 +2,6 @@ import * as Joi from 'joi';
 
 export const configValidationSchema = Joi.object({
   STAGE: Joi.string().valid('dev', 'prod', 'stage').required(),
-  // postgres env variables
-  DB_HOST: Joi.string().required(),
-  DB_PORT: Joi.number().default(5432).required(),
-  DB_USERNAME: Joi.string().required(),
-  DB_PASSWORD: Joi.string().required(),
-  DB_DATABASE: Joi.string().required(),
-
   // rabbit mqenv variables
   RABBITMQ_DEFAULT_USER: Joi.string().required(),
   RABBITMQ_DEFAULT_PASS: Joi.string().required(),

@@ -1,6 +1,5 @@
 import { Column, Entity, ObjectId, ObjectIdColumn, OneToMany } from 'typeorm';
 import { ProductEntity } from './product.entity';
-import { OrderEntity } from './order.entity';
 
 @Entity()
 export class UserEntity {

@@ -22,15 +22,108 @@
   <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
   [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-## Description
+# Crimmit Microservice
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+This repository contains a microservices architecture built with NestJS for an interview assessment. It consists of three services: Owner Service, Products Service, and Order Service. The services communicate via RabbitMQ and gRPC, with MongoDB as the database.
 
-## Project setup
+## Overview
+
+Owner Service: Manages owner profiles and emits RabbitMQ events when an owner's details are updated.
+Products Service: Manages product details and listens for updates from the Owner Service.
+Order Service: Manages orders, listens for product updates, and implements caching for product details using Redis.
+Repository Structure
+libs/shared/src/proto/: Contains the proto files for gRPC communication.
+owner-service/: Implementation of the Owner Service.
+products-service/: Implementation of the Products Service.
+order-service/: Implementation of the Order Service.
+Communication Flow
+Owner Service: Upon updating user details, it emits a RabbitMQ event.
+Products Service: Listens for the event and makes a gRPC call to update the user details.
+Order Service: Listens for product updates and updates orders accordingly.
+Retry Logic
+The system includes a retry mechanism for failed events, although it is not fully implemented due to time constraints. If an event fails, the request will keep retrying without a logging event emitted.
+
+## Getting Started
+
+To run this application, follow these steps:
+
+## Clone the Repository:
+
+```bash
+$ git clone https://github.com/X4MU-L/crimmit-microservice
+$ cd crimmit-microservice
+```
 
 ```bash
 $ yarn install
 ```
+
+### Generate TypeScript Files for proto assests:
+
+Run the following command to generate TypeScript files for the proto files:
+
+```bash
+$ make generate
+```
+
+Note: Open the generated TypeScript files `.ts` in [libs/shared/src/proto](libs/shared/src/proto/) and change all Id to _id with the type string | ObjectId. this is because typescript does not generate _ (underscore) in variable name.
+
+e.g
+
+```ts
+import { ObjectId } from "typeorm";
+
+type Example {
+    // Id: string (commented out)
+    _id: string | ObjectId;
+}
+```
+
+## Set Environment Variables:
+
+Create a .env file in the root directory and add the following variables:
+
+```conf
+RABBITMQ_DEFAULT_USER=
+RABBITMQ_DEFAULT_PASS=
+RABBITMQ_USER=
+RABBITMQ_PASS=
+RABBITMQ_HOST=localhost:5672 # use rabbitmq:5672 if running with container
+RABBITMQ_OWNER_QUEUE=
+RABBITMQ_PRODUCT_QUEUE=
+RABBITMQ_ORDER_QUEUE=
+
+JWT_SECRET=
+
+MONGO_HOST=localhost # use mongoDB if running with container
+MONGO_PORT=
+MONGO_DATABASE=
+
+# Service ports
+PRODUCT_SERVICE_PORT=
+ORDER_SERVICE_PORT=
+
+# gRPC
+GRPC_HOST=
+```
+
+Run the Application:
+Use Docker Compose to run the application:
+
+```bash
+$ docker-compose up -d
+```
+
+Access the API:
+You can access the API through localhost:3000.
+Conclusion
+This microservices architecture demonstrates proficiency in building applications with NestJS, implementing inter-service communication via RabbitMQ and gRPC, and utilizing caching mechanisms effectively.
+
+Feel free to explore the code and test the API.
+
+Good luck!
+
+[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
 ## Compile and run the project
 

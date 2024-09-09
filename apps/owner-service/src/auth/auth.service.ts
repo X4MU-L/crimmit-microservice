@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { UserRepository } from '@app/shared/repository';
 import { UserSignInDto, UserSignupDto } from '@app/shared/dtos';
 import { JwtService } from '@nestjs/jwt';

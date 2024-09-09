@@ -8,13 +8,12 @@ import {
   RmqContext,
 } from '@nestjs/microservices';
 import { SharedService } from '@app/shared';
-import { CreateProductDto } from '@app/shared/dtos';
-import { UpdateProductRequestDto } from '@app/shared/dtos/update-product.dto';
+import { CreateOrderDto, UpdateOrderDto } from '@app/shared/dtos';
 
 @Controller('order')
 export class ProductController {
   constructor(
-    private readonly productService: OrderService,
+    private readonly orderService: OrderService,
     private readonly sharedLib: SharedService,
   ) {}
 
@@ -24,7 +23,7 @@ export class ProductController {
     @Payload('userId') userId: string,
   ) {
     this.sharedLib.acknowledgeMessage(context);
-    return this.productService.getAllOrders(userId);
+    return this.orderService.getAllOrders(userId);
   }
 
   @MessagePattern({ cmd: 'get-a-user-order' })
@@ -34,17 +33,17 @@ export class ProductController {
     @Payload('userId') userId: string,
   ) {
     this.sharedLib.acknowledgeMessage(context);
-    return this.productService.getAnOrder(orderId, userId);
+    return this.orderService.getAnOrder(orderId, userId);
   }
 
   @MessagePattern({ cmd: 'create-order' })
   async createorder(
     @Ctx() context: RmqContext,
-    @Payload() payload: { data: CreateProductDto; user: UserEntity },
+    @Payload() payload: { data: CreateOrderDto; user: UserEntity },
   ) {
     this.sharedLib.acknowledgeMessage(context);
     console.log('create product', payload);
-    return this.productService.createOrder(payload);
+    return this.orderService.createOrder(payload);
   }
 
   @MessagePattern({ cmd: 'update-order' })
@@ -52,12 +51,12 @@ export class ProductController {
     @Ctx() context: RmqContext,
     @Payload()
     payload: {
-      data: UpdateProductRequestDto;
+      data: UpdateOrderDto;
       userId: string;
       orderId: string;
     },
   ) {
     this.sharedLib.acknowledgeMessage(context);
-    return this.productService.updateOrder(payload);
+    return this.orderService.updateOrder(payload);
   }
 }

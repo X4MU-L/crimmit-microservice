@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
-
-import { DynamicMongoModule, OrderRepository, SharedService } from '@app/shared';
+import {
+  DynamicMongoModule,
+  OrderRepository,
+  SharedService,
+} from '@app/shared';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { OrderEntity, ProductEntity, UserEntity } from '@app/shared/entities';
-import { ProductRepository } from '@app/shared/repository/product.repository';
 import { CrimmitGRPCProductController } from './grpc.orders.controller';
 import { ProductController } from './orders.controller';
 import { OrderService } from './orders.service';
@@ -14,7 +16,7 @@ const ORDER_SERVICE_NAME = 'ORDER_SERVICE';
   imports: [
     DynamicMongoModule.register(
       { name: ORDER_SERVICE_NAME, database: ORDER_SERVICE_NAME },
-      [ProductEntity, UserEntity],
+      [ProductEntity, UserEntity, OrderEntity],
     ),
     TypeOrmModule.forFeature([OrderEntity]),
   ],

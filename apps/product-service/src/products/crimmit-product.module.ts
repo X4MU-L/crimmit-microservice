@@ -1,6 +1,10 @@
 import { Module } from '@nestjs/common';
-
-import { DynamicMongoModule, SharedModule, SharedService } from '@app/shared';
+import {
+  DynamicMongoModule,
+  RabbitMQEventService,
+  SharedModule,
+  SharedService,
+} from '@app/shared';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProductEntity, UserEntity } from '@app/shared/entities';
 import { ProductRepository } from '@app/shared/repository/product.repository';
@@ -44,6 +48,7 @@ import {
     ProductRepository,
     SharedService,
     OrderUpdateConsumer,
+    RabbitMQEventService,
   ],
 })
 export class CrimmitProductModule {}

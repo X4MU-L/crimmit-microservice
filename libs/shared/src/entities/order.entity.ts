@@ -1,13 +1,4 @@
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToMany,
-  ManyToOne,
-  ObjectId,
-  ObjectIdColumn,
-} from 'typeorm';
-import { UserEntity } from './user.entity';
+import { Column, Entity, ManyToMany, ObjectId, ObjectIdColumn } from 'typeorm';
 import { ProductEntity } from './product.entity';
 
 @Entity()

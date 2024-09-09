@@ -10,13 +10,7 @@ import {
   InternalServerErrorException,
   UnauthorizedException,
 } from '@nestjs/common';
-import {
-  UpdateUserDto,
-  UpdateUserPayloadDto,
-  UserSignInDto,
-  UserSignupDto,
-} from '../dtos';
-import { Error } from 'mongoose';
+import { UpdateUserPayloadDto, UserSignInDto, UserSignupDto } from '../dtos';
 
 @Injectable()
 export class UserRepository extends Repository<UserEntity> {
@@ -40,7 +34,6 @@ export class UserRepository extends Repository<UserEntity> {
         this.create({ ...data, password: hasshedPassword }),
       );
     } catch (error) {
-      console.log(error, 'errrrrrrr');
       if (+error.code === 23505) {
         throw new ConflictException('Username or Email already exists');
       } else {

@@ -12,12 +12,7 @@ import { ClientProxy } from '@nestjs/microservices';
 import { JwtForUserID, JwtUser } from '../decorators';
 import { AuthGuard } from '@nestjs/passport';
 import { UserEntity } from '@app/shared/entities';
-import {
-  CreateOrderDto,
-  CreateProductDto,
-  UpdateOrderDto,
-} from '@app/shared/dtos';
-import { UpdateProductRequestDto } from '@app/shared/dtos/update-product.dto';
+import { CreateOrderDto, UpdateOrderDto } from '@app/shared/dtos';
 
 @Controller('order')
 @UseGuards(AuthGuard('jwtToken'))

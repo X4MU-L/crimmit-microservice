@@ -9,7 +9,6 @@ import { RabbitMQEventService, SharedModule, SharedService } from '@app/shared';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
-
 import { UserUpdateConsumer } from './user-update.consumer';
 
 @Module({

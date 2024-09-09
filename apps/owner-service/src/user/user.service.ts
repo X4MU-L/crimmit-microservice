@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
-
 import { RabbitMQEventService, UserRepository } from '@app/shared';
-import { ObjectId } from 'mongodb';
 import { UpdateUserPayloadDto } from '@app/shared/dtos';
 
 @Injectable()
@@ -25,8 +23,7 @@ export class UserService {
       return updated;
     } catch (error) {
       console.log(error);
-      return {"error": true};
+      return { error: true };
     }
-    // Publish update request
   }
 }

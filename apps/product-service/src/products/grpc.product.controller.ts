@@ -2,16 +2,11 @@ import { Controller } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
 import {
   UpdateProductDTO,
-  Product,
   Products,
-  UpdateProductServiceController,
   UPDATE_PRODUCT_SERVICE_NAME,
 } from '@app/shared/proto/updateProduct';
-import { forkJoin, from, Observable } from 'rxjs';
 
-import { ProductService } from './crimmit-product.service';
 import { ProductRepository } from '@app/shared';
-import { map } from 'lodash';
 
 @Controller('grpc')
 export class CrimmitGRPCProductController {
