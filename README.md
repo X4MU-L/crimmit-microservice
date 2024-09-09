@@ -24,7 +24,7 @@
 
 # Crimmit Microservice
 
-This repository contains a microservices architecture built with NestJS for an interview assessment. It consists of three services: Owner Service, Products Service, and Order Service. The services communicate via RabbitMQ and gRPC, with MongoDB as the database.
+This repository contains a microservices architecture built with NestJS for an interview assessment. It consists of three services: Owner Service, Products Service, and Order Service. The services communicate via RabbitMQ and gRPC, with MongoDB as the database. A REST API sit between the communication, emits message pattern to the desire microservice using rabbiMQ and returns a HTTP to the client.
 
 ## Overview
 
@@ -114,6 +114,18 @@ Use Docker Compose to run the application:
 $ docker-compose up -d
 ```
 
+each microsevrice can as well be started independendtlly...
+
+having set the environment virables..
+
+```bash
+
+$ yarn start:dev owner-service # start the owner service 
+$ yarn start:dev product-service # start the product service 
+$ yarn start:dev order-service # start the orderservice 
+$ yarn start:dev api # start the api
+
+```
 ## Access the API:
 
 You can access the API through localhost:3000.
