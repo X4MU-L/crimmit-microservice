@@ -6,7 +6,7 @@ import {
 } from '@app/shared';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { OrderEntity, ProductEntity, UserEntity } from '@app/shared/entities';
-import { CrimmitGRPCProductController } from './grpc.orders.controller';
+import { GRPCProductUpdateController } from './grpc.orders.controller';
 import { ProductController } from './orders.controller';
 import { OrderService } from './orders.service';
 
@@ -20,7 +20,7 @@ const ORDER_SERVICE_NAME = 'ORDER_SERVICE';
     ),
     TypeOrmModule.forFeature([OrderEntity]),
   ],
-  controllers: [ProductController, CrimmitGRPCProductController],
+  controllers: [ProductController, GRPCProductUpdateController],
   providers: [OrderService, OrderRepository, SharedService],
 })
 export class CrimmitProductModule {}

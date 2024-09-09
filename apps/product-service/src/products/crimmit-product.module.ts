@@ -6,7 +6,7 @@ import {
   SharedService,
 } from '@app/shared';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ProductEntity, UserEntity } from '@app/shared/entities';
+import { OrderEntity, ProductEntity, UserEntity } from '@app/shared/entities';
 import { ProductRepository } from '@app/shared/repository/product.repository';
 import { CrimmitGRPCProductController } from './grpc.product.controller';
 import { ProductController } from './crimmit-product.controller';
@@ -17,7 +17,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import {
   UPDATE_ORDER_PACKAGE_NAME,
   UPDATE_ORDER_SERVICE_NAME,
-} from '@app/shared/proto/updateOder';
+} from '@app/shared/proto/updateOrder';
 
 @Module({
   imports: [
@@ -36,10 +36,10 @@ import {
         },
       },
     ]),
-    DynamicMongoModule.register({ name: 'hello', database: 'another' }, [
-      ProductEntity,
-      UserEntity,
-    ]),
+    DynamicMongoModule.register(
+      { name: 'product-service', database: 'product-service' },
+      [ProductEntity, UserEntity, OrderEntity],
+    ),
     TypeOrmModule.forFeature([ProductEntity]),
   ],
   controllers: [ProductController, CrimmitGRPCProductController],

@@ -1,18 +1,16 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
-
-import {
-  UpdateProductDTO,
-  UpdateProductServiceClient,
-} from '@app/shared/proto/updateProduct';
 import { lastValueFrom } from 'rxjs';
-
 import { RabbitMQEventService } from '@app/shared';
-import { UPDATE_ORDER_SERVICE_NAME } from '@app/shared/proto/updateOder';
+import {
+  UPDATE_ORDER_SERVICE_NAME,
+  UpdateOrderDTO,
+  UpdateOrderServiceClient,
+} from '@app/shared/proto/updateOrder';
 
 @Injectable()
 export class OrderUpdateConsumer {
-  private grpcClient: UpdateProductServiceClient; // Replace with your gRPC client type
+  private grpcClient: UpdateOrderServiceClient;
 
   constructor(
     @Inject(UPDATE_ORDER_SERVICE_NAME) private client: ClientGrpc,
@@ -22,7 +20,6 @@ export class OrderUpdateConsumer {
     this.rabbitMQService
       .connect()
       .then(() => {
-        console.log('connected');
         this.rabbitMQService.consume(
           'product_updates',
           this.handleUpdate.bind(this),
@@ -33,10 +30,10 @@ export class OrderUpdateConsumer {
       });
   }
 
-  async handleUpdate(updateRequest: UpdateProductDTO) {
+  async handleUpdate(updateRequest: UpdateOrderDTO) {
     try {
       // Call the gRPC service
-      await lastValueFrom(this.grpcClient.updateProduct(updateRequest));
+      await lastValueFrom(this.grpcClient.updateOrder(updateRequest));
     } catch (error) {
       // Re-publish for retry logic
       await this.rabbitMQService.publish('product_updates', updateRequest);

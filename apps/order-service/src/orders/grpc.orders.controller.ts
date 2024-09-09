@@ -6,28 +6,27 @@ import {
   UPDATE_PRODUCT_SERVICE_NAME,
 } from '@app/shared/proto/updateProduct';
 import { OrderRepository } from '@app/shared';
+import {
+  Orders,
+  UPDATE_ORDER_SERVICE_NAME,
+  UpdateOrderDTO,
+} from '@app/shared/proto/updateOrder';
+import { Observable } from 'rxjs';
 
 @Controller('grpc')
-export class CrimmitGRPCProductController {
+export class GRPCProductUpdateController {
   constructor(private readonly productRepo: OrderRepository) {}
-  @GrpcMethod(UPDATE_PRODUCT_SERVICE_NAME)
-  async updateProduct(request: UpdateProductDTO): Promise<Products> {
-    console.log('User update event received');
 
-    const { user, data } = request;
-    const userProducts = await this.productRepo.getAllUserProducts(
-      user._id.toString(),
-    );
-    console.log(userProducts, data, 'data and products');
-    await Promise.all(
-      userProducts.map(async (product) => {
-        this.productRepo.update(product._id, {
-          user: { ...product.user, ...data },
-        });
-        this.productRepo.save(product);
-      }),
-    );
-    // Return the updated products wrapped in the Products interface
-    return { products: userProducts };
+  @GrpcMethod(UPDATE_ORDER_SERVICE_NAME)
+  updateOrder(
+    request: UpdateOrderDTO,
+  ): Promise<Orders> | Observable<Orders> | Orders {
+    console.log('User update event received');
+    return {
+      _id: 'hsjs',
+      productIds: ['hhhj'],
+      quantity: 8,
+      totalPrice: 290,
+    };
   }
 }
